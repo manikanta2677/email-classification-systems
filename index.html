@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Classification System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+        }
+
+        .sample-buttons {
+            margin-bottom: 25px;
+        }
+
+        .sample-buttons h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .sample-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .sample-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .btn-urgent {
+            background: #fee;
+            color: #c00;
+        }
+
+        .btn-financial {
+            background: #efe;
+            color: #070;
+        }
+
+        .btn-hr {
+            background: #eef;
+            color: #00c;
+        }
+
+        .btn-general {
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 150px;
+            transition: border-color 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #333;
+            border: 2px solid #ddd;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .result-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .result-header h2 {
+            color: #333;
+            font-size: 1.8em;
+        }
+
+        .check-icon {
+            width: 30px;
+            height: 30px;
+            background: #4CAF50;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin-right: 15px;
+            font-size: 1.2em;
+        }
+
+        .result-content {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .result-item h3 {
+            color: #666;
+            font-size: 1em;
+            margin-bottom: 10px;
+        }
+
+        .category-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-size: 1.5em;
+            font-weight: bold;
+            border: 3px solid;
+        }
+
+        .badge-urgent {
+            background: #fee;
+            color: #c00;
+            border-color: #fcc;
+        }
+
+        .badge-financial {
+            background: #efe;
+            color: #070;
+            border-color: #cfc;
+        }
+
+        .badge-hr {
+            background: #eef;
+            color: #00c;
+            border-color: #ccf;
+        }
+
+        .badge-general {
+            background: #f5f5f5;
+            color: #333;
+            border-color: #ddd;
+        }
+        .badge-spam {
+            background: #ffe6e6;
+            color: #b30000;
+            border-color: #ffb3b3;
+        }
+
+        .badge-ham {
+            background: #e6fff0;
+            color: #006600;
+            border-color: #b3ffcc;
+        }
+
+        .confidence-bar {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .progress-container {
+            flex: 1;
+            height: 20px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        .confidence-text {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+            min-width: 70px;
+        }
+
+        .info-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .info-card h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            color: #666;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #fff;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>📧 Email Classification System</h1>
+            <p>Automatically categorize emails using AI-powered NLP</p>
+        </div>
+
+        <!-- Main Card -->
+        <div class="card">
+            <!-- Sample Buttons -->
+            <div class="sample-buttons">
+                <h3>🎯 Try Sample Emails:</h3>
+                <div class="button-group">
+                    <button class="sample-btn btn-urgent" onclick="loadSample('urgent')">
+                        🚨 Urgent
+                    </button>
+                    <button class="sample-btn btn-financial" onclick="loadSample('financial')">
+                        💰 Financial
+                    </button>
+                    <button class="sample-btn btn-hr" onclick="loadSample('hr')">
+                        👥 HR
+                    </button>
+                    <button class="sample-btn btn-general" onclick="loadSample('general')">
+                        📧 General
+                    </button>
+                    <button class="sample-btn btn-spam" onclick="loadSample('spam')">
+                        ⚠️ Spam
+                    </button>
+                </div>
+            </div>
+
+            <!-- Email Input -->
+            <div class="form-group">
+                <label for="emailText">Email Content:</label>
+                <textarea 
+                    id="emailText" 
+                    placeholder="Paste or type your email content here..."
+                ></textarea>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="btn btn-primary" id="classifyBtn" onclick="classifyEmail()">
+                    📤 Classify Email
+                </button>
+                <button class="btn btn-secondary" onclick="clearForm()">
+                    🗑️ Clear
+                </button>
+            </div>
+        </div>
+
+        <!-- Result Card (Hidden by default) -->
+        <div id="resultCard" class="result-card hidden">
+            <div class="result-header">
+                <div class="check-icon">✓</div>
+                <h2>Classification Result</h2>
+            </div>
+            
+            <div class="result-content">
+                <div class="result-item">
+                    <h3>Category:</h3>
+                    <div id="categoryBadge"></div>
+                </div>
+
+                <div class="result-item">
+                    <h3>Spam Detection:</h3>
+                    <div id="spamStatus"></div>
+                </div>
+
+                <div class="result-item">
+                    <h3>Confidence:</h3>
+                    <div class="confidence-bar">
+                        <div class="progress-container">
+                            <div class="progress-bar" id="progressBar"></div>
+                        </div>
+                        <div class="confidence-text" id="confidenceText">0%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Info Card -->
+        <div class="info-card">
+            <h3>📊 About This System</h3>
+            <div class="info-grid">
+                <div>
+                    <strong>🚨 Urgent:</strong> Critical issues requiring immediate attention
+                </div>
+                <div>
+                    <strong>💰 Financial:</strong> Invoices, payments, budgets
+                </div>
+                <div>
+                    <strong>👥 HR:</strong> Employee-related matters
+                </div>
+                <div>
+                    <strong>📧 General:</strong> Standard queries and communication
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample emails
+        const samples = {
+            urgent: "URGENT: Server down! Production environment is experiencing critical issues. Need immediate attention.",
+            financial: "Your invoice #12345 for $5000 is due next week. Please process the payment at your earliest convenience.",
+            hr: "Reminder: Annual performance review scheduled for next Monday at 2 PM. Please prepare your self-assessment.",
+            general: "Can you please share the meeting notes from yesterday's discussion? Thanks!",
+            spam: "Congratulations! You have been selected as a winner. Click here to claim your prize: http://spam.example.com"
+        };
+
+        // Category icons
+        const categoryIcons = {
+            'Urgent': '🚨',
+            'Financial': '💰',
+            'HR': '👥',
+            'General': '📧',
+            'Spam': '⚠️'
+        };
+
+        // Load sample email
+        function loadSample(type) {
+            document.getElementById('emailText').value = samples[type];
+            document.getElementById('resultCard').classList.add('hidden');
+        }
+
+        // Clear form
+        function clearForm() {
+            document.getElementById('emailText').value = '';
+            document.getElementById('resultCard').classList.add('hidden');
+        }
+
+        // Classify email
+        async function classifyEmail() {
+            const emailText = document.getElementById('emailText').value.trim();
+            const classifyBtn = document.getElementById('classifyBtn');
+
+            if (!emailText) {
+                alert('Please enter some email text!');
+                return;
+            }
+
+            // Disable button and show loading
+            classifyBtn.disabled = true;
+            classifyBtn.innerHTML = '<span class="loading"></span>Classifying...';
+
+            try {
+                // 🔥 UPDATED FETCH URL HERE
+                const response = await fetch('http://127.0.0.1:5000/classify', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email: emailText })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    displayResult(data.category, data.confidence, data.is_spam);
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                alert('Error connecting to server: ' + error.message);
+            } finally {
+                // Re-enable button
+                classifyBtn.disabled = false;
+                classifyBtn.innerHTML = '📤 Classify Email';
+            }
+        }
+
+        // Display result
+        function displayResult(category, confidence, isSpam) {
+            const resultCard = document.getElementById('resultCard');
+            const categoryBadge = document.getElementById('categoryBadge');
+            const spamStatus = document.getElementById('spamStatus');
+            const progressBar = document.getElementById('progressBar');
+            const confidenceText = document.getElementById('confidenceText');
+
+            const icon = categoryIcons[category];
+            const badgeClass = `badge-${category.toLowerCase()}`;
+
+            categoryBadge.innerHTML = `
+                <div class="category-badge ${badgeClass}">
+                    <span style="margin-right: 10px; font-size: 1.2em;">${icon}</span>
+                    ${category}
+                </div>
+            `;
+
+            // Spam badge
+            if (isSpam) {
+                spamStatus.innerHTML = `
+                    <div class="category-badge badge-spam">⚠️ Spam</div>
+                `;
+            } else {
+                spamStatus.innerHTML = `
+                    <div class="category-badge badge-ham">✅ Not spam</div>
+                `;
+            }
+
+            const confidencePercent = (confidence * 100).toFixed(1);
+            progressBar.style.width = confidencePercent + '%';
+            confidenceText.textContent = confidencePercent + '%';
+
+            resultCard.classList.remove('hidden');
+
+            setTimeout(() => {
+                resultCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
+        }
+    </script>
+</body>
+</html>
